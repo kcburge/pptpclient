@@ -7,7 +7,9 @@ RELEASE=
 PPPD = /usr/sbin/pppd
 # Solaris
 # PPPD = /usr/bin/pppd
-IP = /bin/ip
+#IP = /bin/ip
+# Redhat/CentOS
+IP = /sbin/ip
 #################################################################
 
 BINDIR=$(DESTDIR)/usr/sbin
