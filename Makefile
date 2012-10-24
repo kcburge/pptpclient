@@ -1,10 +1,15 @@
-# $Id: Makefile,v 1.47 2008/05/14 06:32:52 quozl Exp $
+# $Id: Makefile,v 1.51 2011/11/29 22:05:07 quozl Exp $
 VERSION=1.7.2
 RELEASE=
 
 #################################################################
-# CHANGE THIS LINE to point to the location of your pppd binary.
+# CHANGE THIS LINE to point to the location of binaries
 PPPD = /usr/sbin/pppd
+# Solaris
+# PPPD = /usr/bin/pppd
+#IP = /bin/ip
+# Redhat/CentOS
+IP = /sbin/ip
 #################################################################
 
 BINDIR=$(DESTDIR)/usr/sbin
@@ -43,10 +48,13 @@ $(PPTP_BIN): $(PPTP_OBJS) $(PPTP_DEPS)
 pptpsetup.8: pptpsetup
 	pod2man $? > $@
 
-config.h: 
-	echo "/* text added by Makefile target config.h */" > config.h
-	echo "#define PPTP_LINUX_VERSION \"$(VERSION)$(RELEASE)\"" >> config.h
-	echo "#define PPPD_BINARY \"$(PPPD)\"" >> config.h
+config.h:
+	( \
+	echo "/* text added by Makefile target config.h */"; \
+	echo "#define PPTP_LINUX_VERSION \"$(VERSION)$(RELEASE)\""; \
+	echo "#define PPPD_BINARY \"$(PPPD)\""; \
+	echo "#define IP_BINARY \"$(IP)\"" \
+	) > config.h
 
 vector_test: vector_test.o vector.o
 	$(CC) -o vector_test vector_test.o vector.o

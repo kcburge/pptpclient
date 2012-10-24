@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "routing.h"
+#include "config.h"
 
 /* route to the server */
 char *route;
@@ -55,8 +56,10 @@ regardless (not yet implemented).
 
 void routing_init(char *ip) {
   char buf[256];
-  snprintf(buf, 255, "/bin/ip route get %s", ip);
-  FILE *p = popen(buf, "r");
+  FILE *p;
+
+  snprintf(buf, 255, "%s route get %s", IP_BINARY, ip);
+  p = popen(buf, "r");
   fgets(buf, 255, p);
   /* TODO: check for failure of fgets */
   route = strdup(buf);
@@ -66,14 +69,18 @@ void routing_init(char *ip) {
 
 void routing_start() {
   char buf[256];
-  snprintf(buf, 255, "/bin/ip route replace %s", route);
-  FILE *p = popen(buf, "r");
+  FILE *p;
+
+  snprintf(buf, 255, "%s route replace %s", IP_BINARY, route);
+  p = popen(buf, "r");
   pclose(p);
 }
 
 void routing_end() {
   char buf[256];
-  snprintf(buf, 255, "/bin/ip route delete %s", route);
-  FILE *p = popen(buf, "r");
+  FILE *p;
+
+  snprintf(buf, 255, "%s route delete %s", IP_BINARY, route);
+  p = popen(buf, "r");
   pclose(p);
 }
