@@ -126,7 +126,7 @@ void usage(char *progname)
             "  --nohostroute		Do not add host route towards <hostname>\n"
             "  --loglevel <level>	Sets the debugging level (0=low, 1=default, 2=high)\n"
             "  --test-type <type>	Damage the packet stream by reordering\n"
-            "  --test-rate <n>		Do the test every n packets\n",
+            "  --test-rate <n>		Do the test every n packets\n"
             "  --missing-window <n> Activate 'missing window' validation and set tolerance to <n> packages (300=default, 6000=recommended)\n",
             
             version, progname, progname);
@@ -312,7 +312,6 @@ int main(int argc, char **argv, char **envp)
 #endif
 		} else if (option_index == 16) { /* --nohostroute */
 		    nohostroute = 1;
-                }
 		} else if (option_index == 17) { /* --missing window */
 		    int x = atoi(optarg);
 		    if (x <= 0) {
