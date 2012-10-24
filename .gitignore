@@ -1,0 +1,4 @@
+*.8
+*.o
+config.h
+pptp
