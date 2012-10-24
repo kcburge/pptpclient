@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include "util.h"
 
-
 #if defined (__SVR4) && defined (__sun) /* Solaris */
 /*
  * daemon implementation from uClibc

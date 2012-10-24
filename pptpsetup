@@ -43,12 +43,13 @@ exit;
 sub create {
     my $TUNNEL = shift;
 
-    # system checking
-    &Check_MPPE_in_kernel
-        or die "$0: couldn't find MPPE support in kernel.\n";
-
-    &Check_MPPE_in_pppd
-        or die "$0: couldn't find MPPE support in pppd.\n";
+    # if encryption is requested, check for support in kernel and pppd
+    if ( $ENCRYPT ) {
+        &Check_MPPE_in_kernel
+            or die "$0: couldn't find MPPE support in kernel.\n";
+        &Check_MPPE_in_pppd
+            or die "$0: couldn't find MPPE support in pppd.\n";
+    }
 
     # input validation
     ($TUNNEL) = $TUNNEL =~ m{^(\w+)$}
@@ -154,6 +155,7 @@ sub delete {
 
     # delete entry from chap-secrets
     my $chap_file = '/etc/ppp/chap-secrets';
+    my $mode = (stat($chap_file))[2] & 07777;
 
     open( FILE, $chap_file )
         or die "$0: can't read '$chap_file': $!\n";
@@ -171,6 +173,7 @@ sub delete {
     # write new chap-secrets
     open( FILE, ">$chap_file" )
         or die "$0: can't write '$chap_file': $!\n";
+    chmod $mode, $chap_file;
     print FILE $new_chap;
     close FILE;
 
