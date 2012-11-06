@@ -32,7 +32,7 @@ typedef struct gre_stats {
                          // packet(s) before it were lost or reordered
   uint32_t rx_errors;    // OS error on receive
   uint32_t rx_truncated; // truncated packet
-  uint32_t rx_invalid;   // wrong protocol or invalid flags 
+  uint32_t rx_invalid;   // wrong protocol or invalid flags
   uint32_t rx_acks;      // acknowledgement only
 
   /* statistics for GRE transmit */

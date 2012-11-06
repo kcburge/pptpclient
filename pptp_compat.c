@@ -52,13 +52,13 @@ int daemon(int nochdir, int noclose)
 
 /*
  * openpty implementation based on pts(7D) example
- */ 
+ */
 int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize * winp) {
 	int fdm,fds;
 	char * slavename;
 
 	/* open master */
-	if ( (fdm = open("/dev/ptmx", O_RDWR)) == -1 ) 
+	if ( (fdm = open("/dev/ptmx", O_RDWR)) == -1 )
 		return -1;
 
 	/* grant access to the slave pseudo-terminal device */
@@ -70,7 +70,7 @@ int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct
 		return -1;
 
 	/* get name of the slave pseudo-terminal device */
-	if ( (slavename = ptsname(fdm)) == NULL ) 
+	if ( (slavename = ptsname(fdm)) == NULL )
 		return -1;
 
 	if ( (fds = open(slavename, O_RDWR)) == -1 ) {
@@ -80,7 +80,7 @@ int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct
 
 	ioctl(fds, I_PUSH, "ptem");       /* push ptem */
 	ioctl(fds, I_PUSH, "ldterm");     /* push ldterm*/
-	
+
 	if ( name != NULL )
 		strcpy(name,slavename);
 
@@ -89,6 +89,6 @@ int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct
 
 	free(slavename);
 	return 0;
-	
+
 }
 #endif /* Solaris */

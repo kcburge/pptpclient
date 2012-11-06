@@ -78,7 +78,7 @@ void call_callback(PPTP_CONN *conn, PPTP_CALL *call, enum call_state state)
              * are sync'ed */
             log("Closing connection (call state)");
             conninfo = pptp_conn_closure_get(conn);
-            lci = pptp_call_closure_get(conn, call); 
+            lci = pptp_call_closure_get(conn, call);
             assert(lci != NULL && conninfo != NULL);
             if (vector_contains(conninfo->call_list, lci->unix_sock)) {
                 vector_remove(conninfo->call_list, lci->unix_sock);
@@ -115,7 +115,7 @@ int callmgr_main(int argc, char **argv, char **envp)
     int i;
     char * volatile phonenr;
     /* Step 0: Check arguments */
-    if (argc < 2) 
+    if (argc < 2)
         fatal("Usage: %s ip.add.ress.here [--phone <phone number>]", argv[0]);
     phonenr = argc == 3 ? argv[2] : NULL;
     if (inet_aton(argv[1], &inetaddr) == 0)
@@ -152,7 +152,7 @@ int callmgr_main(int argc, char **argv, char **envp)
     }
     FD_ZERO(&call_set);
     call_list = vector_create();
-    { 
+    {
         struct local_conninfo *conninfo = malloc(sizeof(*conninfo));
         if (conninfo == NULL) {
             close(unix_sock); close(inet_sock); fatal("No memory.");
@@ -269,7 +269,7 @@ shutdown:
 	select(max_fd + 1, &read_set, &write_set, NULL, &tv);
         rc = pptp_dispatch(conn, &read_set, &write_set);
 	if (rc > 0) {
-	  /* wait for a respond, a timeout because there might not be one */ 
+	  /* wait for a respond, a timeout because there might not be one */
 	  FD_ZERO(&read_set);
 	  FD_ZERO(&write_set);
 	  pptp_fd_set(conn, &read_set, &write_set, &max_fd);
@@ -281,7 +281,7 @@ shutdown:
 	    if (i > 0) sleep(2);
 	    /* no more open calls.  Close the connection. */
 	    pptp_conn_close(conn, PPTP_STOP_LOCAL_SHUTDOWN);
-	    /* wait for a respond, a timeout because there might not be one */ 
+	    /* wait for a respond, a timeout because there might not be one */
 	    FD_ZERO(&read_set);
 	    FD_ZERO(&write_set);
 	    pptp_fd_set(conn, &read_set, &write_set, &max_fd);
@@ -378,7 +378,7 @@ void close_unixsock(int fd, struct in_addr inetaddr)
 }
 
 /*** make a unix socket address ***********************************************/
-void callmgr_name_unixsock(struct sockaddr_un *where, 
+void callmgr_name_unixsock(struct sockaddr_un *where,
 			   struct in_addr inetaddr,
 			   struct in_addr localbind)
 {

@@ -84,7 +84,7 @@ int missing_window = MISSING_WINDOW;
 struct in_addr get_ip_address(char *name);
 int open_callmgr(struct in_addr inetaddr, char *phonenr, int argc,char **argv,char **envp, int pty_fd, int gre_fd);
 void launch_callmgr(struct in_addr inetaddr, char *phonenr, int argc,char **argv,char **envp);
-int get_call_id(int sock, pid_t gre, pid_t pppd, 
+int get_call_id(int sock, pid_t gre, pid_t pppd,
 		 u_int16_t *call_id, u_int16_t *peer_call_id);
 void launch_pppd(char *ttydev, int argc, char **argv);
 
@@ -124,7 +124,7 @@ void usage(char *progname)
             "  --test-type <type>	Damage the packet stream by reordering\n"
             "  --test-rate <n>       Do the test every n packets\n"
             "  --missing-window <n>  Activate 'missing window' validation and set tolerance to <n> packages (300=default, 6000=recommended)\n",
-            
+
             version, progname, progname);
     log("%s called with wrong arguments, program not started.", progname);
     exit(1);
@@ -139,7 +139,7 @@ static int signaled = 0;
 
 /*** do nothing signal handler ************************************************/
 void do_nothing(int sig)
-{ 
+{
     /* do nothing signal handler. Better than SIG_IGN. */
     signaled = sig;
 }
@@ -196,11 +196,11 @@ int main(int argc, char **argv, char **envp)
     char * volatile phonenr = NULL;
     volatile int launchpppd = 1, debug = 0;
 
-    while(1){ 
+    while(1){
         /* structure with all recognised options for pptp */
         static struct option long_options[] = {
-            {"phone", 1, 0, 0},  
-            {"nolaunchpppd", 0, 0, 0},  
+            {"phone", 1, 0, 0},
+            {"nolaunchpppd", 0, 0, 0},
             {"quirks", 1, 0, 0},
             {"debug", 0, 0, 0},
             {"sync", 0, 0, 0},
@@ -222,7 +222,7 @@ int main(int argc, char **argv, char **envp)
         c = getopt_long (argc, argv, "", long_options, &option_index);
         if (c == -1) break;  /* no more options */
         switch (c) {
-            case 0: 
+            case 0:
                 if (option_index == 0) { /* --phone specified */
                     /* copy it to a buffer, as the argv's will be overwritten
                      * by inststr() */
@@ -254,9 +254,9 @@ int main(int argc, char **argv, char **envp)
                     }
                 } else if (option_index == 6) {/* --logstring */
                     log_string = strdup(optarg);
-                } else if (option_index == 7) {/* --localbind */ 
+                } else if (option_index == 7) {/* --localbind */
                     if (inet_pton(AF_INET, optarg, (void *) &localbind) < 1) {
-                        fprintf(stderr, "Local bind address %s invalid\n", 
+                        fprintf(stderr, "Local bind address %s invalid\n",
 				optarg);
                         log("Local bind address %s invalid\n", optarg);
                         exit(2);
@@ -342,8 +342,8 @@ int main(int argc, char **argv, char **envp)
     /* Find an open pty/tty pair. */
     if(launchpppd){
         rc = openpty (&pty_fd, &tty_fd, ttydev, NULL, NULL);
-        if (rc < 0) { 
-            close(callmgr_sock); 
+        if (rc < 0) {
+            close(callmgr_sock);
             fatal("Could not find free pty.");
         }
 
@@ -369,10 +369,10 @@ int main(int argc, char **argv, char **envp)
                 if (!signaled) {
                     pause(); /* wait for the signal */
                 }
- 
+
                 if (signaled == SIGCHLD)
                     fatal("Child process died");
- 
+
                 launch_pppd(ttydev, pppdargc, pppdargv); /* launch pppd */
                 perror("Error");
                 fatal("Could not launch pppd");
@@ -392,7 +392,7 @@ int main(int argc, char **argv, char **envp)
         callmgr_sock = open_callmgr(inetaddr, phonenr, argc, argv, envp,
 		pty_fd, gre_fd);
         /* Exchange PIDs, get call ID */
-    } while (get_call_id(callmgr_sock, parent_pid, child_pid, 
+    } while (get_call_id(callmgr_sock, parent_pid, child_pid,
                 &call_id, &peer_call_id) < 0);
 
     /* Send signal to wake up pppd task */
@@ -476,7 +476,7 @@ int open_callmgr(struct in_addr inetaddr, char *phonenr, int argc, char **argv,
         if (connect(fd, (struct sockaddr *) &where, sizeof(where)) < 0) {
             /* couldn't connect.  We'll have to launch this guy. */
 
-            unlink (where.sun_path);	
+            unlink (where.sun_path);
 
             /* fork and launch call manager process */
             switch (pid = fork()) {
@@ -507,7 +507,7 @@ int open_callmgr(struct in_addr inetaddr, char *phonenr, int argc, char **argv,
 
 /*** call the call manager main ***********************************************/
 void launch_callmgr(struct in_addr inetaddr, char *phonenr, int argc,
-        char**argv,char**envp) 
+        char**argv,char**envp)
 {
       char *my_argv[3] = { argv[0], inet_ntoa(inetaddr), phonenr };
       char buf[128];
@@ -524,7 +524,7 @@ void launch_callmgr(struct in_addr inetaddr, char *phonenr, int argc,
 
 /*** exchange data with the call manager  *************************************/
 /* XXX need better error checking XXX */
-int get_call_id(int sock, pid_t gre, pid_t pppd, 
+int get_call_id(int sock, pid_t gre, pid_t pppd,
 		 u_int16_t *call_id, u_int16_t *peer_call_id)
 {
     u_int16_t m_call_id, m_peer_call_id;

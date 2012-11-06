@@ -22,11 +22,11 @@ typedef void (*pptp_conn_cb)(PPTP_CONN*, enum conn_state);
 
 /* if 'isclient' is true, then will send 'conn open' packet to other host.
  * not necessary if this is being opened by a server process after
- * receiving a conn_open packet from client. 
+ * receiving a conn_open packet from client.
  */
-PPTP_CONN * pptp_conn_open(int inet_sock, int isclient, 
+PPTP_CONN * pptp_conn_open(int inet_sock, int isclient,
 			   pptp_conn_cb callback);
-PPTP_CALL * pptp_call_open(PPTP_CONN * conn, 
+PPTP_CALL * pptp_call_open(PPTP_CONN * conn,
 			   pptp_call_cb callback, char *phonenr);
 int pptp_conn_established(PPTP_CONN * conn);
 /* soft close.  Will callback on completion. */
@@ -46,9 +46,9 @@ int pptp_dispatch(PPTP_CONN * conn, fd_set * read_set, fd_set * write_set);
 /* Get info about connection, call */
 void pptp_call_get_ids(PPTP_CONN * conn, PPTP_CALL * call,
 		       u_int16_t * call_id, u_int16_t * peer_call_id);
-/* Arbitrary user data about this call/connection. 
+/* Arbitrary user data about this call/connection.
  * It is the caller's responsibility to free this data before calling
- * pptp_call|conn_close() 
+ * pptp_call|conn_close()
  */
 void * pptp_conn_closure_get(PPTP_CONN * conn);
 void   pptp_conn_closure_put(PPTP_CONN * conn, void *cl);

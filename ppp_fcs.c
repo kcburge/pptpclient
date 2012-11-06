@@ -82,7 +82,7 @@ u16 pppfcs16(u16 fcs, void *_cp, int len)
     register unsigned char *cp = (unsigned char *)_cp;
     /* don't worry about the efficiency of these asserts here.  gcc will
      * recognise that the asserted expressions are constant and remove them.
-     * Whether they are usefull is another question. 
+     * Whether they are usefull is another question.
      */
     ASSERT(sizeof (u16) == 2);
     ASSERT(((u16) -1) > 0);

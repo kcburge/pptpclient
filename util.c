@@ -90,13 +90,13 @@ static int sigpipe[2];
 int sigpipe_create()
 {
   int rc;
-  
+
   rc = pipe(sigpipe);
   if (rc < 0) return rc;
-  
+
   fcntl(sigpipe[0], F_SETFD, FD_CLOEXEC);
   fcntl(sigpipe[1], F_SETFD, FD_CLOEXEC);
-  
+
 #ifdef O_NONBLOCK
 #define FLAG_TO_SET O_NONBLOCK
 #else
@@ -106,7 +106,7 @@ int sigpipe_create()
 #define FLAG_TO_SET FNDELAY
 #endif
 #endif
-  
+
   rc = fcntl(sigpipe[1], F_GETFL);
   if (rc != -1)
     rc = fcntl(sigpipe[1], F_SETFL, rc | FLAG_TO_SET);
@@ -151,4 +151,3 @@ void sigpipe_close()
   close(sigpipe[0]);
   close(sigpipe[1]);
 }
-

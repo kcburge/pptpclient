@@ -43,29 +43,29 @@ static int pqueue_alloc(int seq, unsigned char *packet, int packlen, pqueue_t **
       if (newent->capacity >= packlen) {
 
  	/* unlink from freelist */
-	if (pq_freelist_head == newent) 
+	if (pq_freelist_head == newent)
 	  pq_freelist_head = newent->next;
 
-	if (newent->prev) 
+	if (newent->prev)
 	  newent->prev->next = newent->next;
 
-	if (newent->next) 
+	if (newent->next)
 	  newent->next->prev = newent->prev;
 
-	if (pq_freelist_head) 
+	if (pq_freelist_head)
 	  pq_freelist_head->prev = NULL;
 
 	break;
       }	/* end if capacity >= packlen */
     } /* end for */
-	
+
     /* nothing found? Take first and reallocate it */
     if (NULL == newent) {
 
       newent = pq_freelist_head;
       pq_freelist_head = pq_freelist_head->next;
 
-      if (pq_freelist_head) 
+      if (pq_freelist_head)
 	pq_freelist_head->prev = NULL;
 
       DEBUG_CMD(log("realloc capacity %d to %d",newent->capacity, packlen););
@@ -78,7 +78,7 @@ static int pqueue_alloc(int seq, unsigned char *packet, int packlen, pqueue_t **
       }
       newent->capacity = packlen;
     }
-    
+
     DEBUG_CMD(log("Recycle entry from freelist. Capacity: %d", newent->capacity););
 
   } else {
@@ -143,7 +143,7 @@ int pqueue_add (int seq, unsigned char *packet, int packlen) {
       // gone too far: point->seq > seq and point->prev->seq < seq
       if (point->prev) {
 	// insert between point->prev and point
-	DEBUG_CMD(log("adding %d between %d and %d", 
+	DEBUG_CMD(log("adding %d between %d and %d",
 		      seq, point->prev->seq, point->seq););
 
 	point->prev->next = newent;
@@ -164,7 +164,7 @@ int pqueue_add (int seq, unsigned char *packet, int packlen) {
    * so all the packets in the queue have lower sequences,
    * so this packet belongs at the end of the queue (which might be empty)
    */
-  
+
   if (pq_head == NULL) {
     DEBUG_CMD(log("adding %d to empty queue", seq););
     pq_head = newent;

@@ -58,7 +58,7 @@ void print_packet(int fd, void *pack, unsigned int len)
     for (i = 0; i < len; i += 16) {
         for (j = 0; j < 8; j++)
             if (i + 2 * j + 1 < len)
-                fprintf(out, "%02x%02x ", 
+                fprintf(out, "%02x%02x ",
                         (unsigned int) b[i + 2 * j],
                         (unsigned int) b[i + 2 * j + 1]);
             else if (i + 2 * j < len)
@@ -105,7 +105,7 @@ int pptp_gre_bind(struct in_addr inetaddr)
 }
 
 /*** pptp_gre_copy ************************************************************/
-void pptp_gre_copy(u_int16_t call_id, u_int16_t peer_call_id, 
+void pptp_gre_copy(u_int16_t call_id, u_int16_t peer_call_id,
 		   int pty_fd, int gre_fd)
 {
     int max_fd;
@@ -168,7 +168,7 @@ void pptp_gre_copy(u_int16_t call_id, u_int16_t peer_call_id,
         } else if (retval == 0 && ack_sent != seq_recv) {
             /* if outstanding ack */
             /* send ack with no payload */
-            encaps_gre(gre_fd, NULL, 0);         
+            encaps_gre(gre_fd, NULL, 0);
         }
         if (retval > 0 && FD_ISSET(gre_fd, &rfds)) {
             if (decaps_gre (gre_fd, encaps_hdlc, pty_fd) < 0)
@@ -333,7 +333,7 @@ int decaps_gre (int fd, callback_t callback, int cl)
         return -1;
     }
     /* strip off IP header, if present */
-    if ((buffer[0] & 0xF0) == 0x40) 
+    if ((buffer[0] & 0xF0) == 0x40)
         ip_len = (buffer[0] & 0xF) * 4;
     header = (struct pptp_gre_header *)(buffer + ip_len);
     /* verify packet (else discard) */
@@ -350,10 +350,10 @@ int decaps_gre (int fd, callback_t callback, int cl)
             /* routing and recursion ctrl = 0  */
             ((ntoh8(header->flags)&0xF) != 0)) {
         /* if invalid, discard this packet */
-        warn("Discarding GRE: %X %X %X %X %X %X", 
-                ntoh8(header->ver)&0x7F, ntoh16(header->protocol), 
+        warn("Discarding GRE: %X %X %X %X %X %X",
+                ntoh8(header->ver)&0x7F, ntoh16(header->protocol),
                 PPTP_GRE_IS_C(ntoh8(header->flags)),
-                PPTP_GRE_IS_R(ntoh8(header->flags)), 
+                PPTP_GRE_IS_R(ntoh8(header->flags)),
                 PPTP_GRE_IS_K(ntoh8(header->flags)),
                 ntoh8(header->flags) & 0xF);
         stats.rx_invalid++;
@@ -362,7 +362,7 @@ int decaps_gre (int fd, callback_t callback, int cl)
     /* silently discard packets not for this call */
     if (ntoh16(header->call_id) != pptp_gre_call_id) return 0;
     /* test if acknowledgement present */
-    if (PPTP_GRE_IS_A(ntoh8(header->ver))) { 
+    if (PPTP_GRE_IS_A(ntoh8(header->ver))) {
         u_int32_t ack = (PPTP_GRE_IS_S(ntoh8(header->flags)))?
             header->ack:header->seq; /* ack in different place if S = 0 */
         ack = ntoh32( ack);
@@ -387,7 +387,7 @@ int decaps_gre (int fd, callback_t callback, int cl)
         warn("discarding truncated packet (expected %d, got %d bytes)",
                 payload_len, status - headersize);
         stats.rx_truncated++;
-        return 0; 
+        return 0;
     }
     /* check for expected sequence number */
     if ( first || (seq == seq_recv + 1)) { /* wrap-around safe */
@@ -397,7 +397,7 @@ int decaps_gre (int fd, callback_t callback, int cl)
         first = 0;
         seq_recv = seq;
         return callback(cl, buffer + ip_len + headersize, payload_len);
-    /* out of order, check if the number is too low and discard the packet. 
+    /* out of order, check if the number is too low and discard the packet.
      * (handle sequence number wrap-around, and try to do it right) */
     } else if ( seq < seq_recv + 1 || WRAPPED(seq_recv, seq) ) {
 	if ( log_level >= 1 )
@@ -405,13 +405,15 @@ int decaps_gre (int fd, callback_t callback, int cl)
                 seq, seq_recv + 1);
         stats.rx_underwin++;
     /* sequence number too high, is it reasonably close? */
-    } else if ( (missing_window == -1) || 
+    } else if ( (missing_window == -1) ||
 				(seq < seq_recv + missing_window || WRAPPED(seq, seq_recv + missing_window)) ) {
 		stats.rx_buffered++;
+#if 0
         if ( log_level >= 2 )
             log("%s packet %d (expecting %d, lost or reordered)",
                 disable_buffer ? "accepting" : "buffering",
                 seq, seq_recv+1);
+#endif
         if ( disable_buffer ) {
             seq_recv = seq;
             stats.rx_lost += seq - seq_recv - 1;
@@ -422,7 +424,7 @@ int decaps_gre (int fd, callback_t callback, int cl)
     /* no, packet must be discarded */
     } else {
 	if ( log_level >= 1 )
-            warn("discarding bogus packet %d (expecting %d)", 
+            warn("discarding bogus packet %d (expecting %d)",
 		 seq, seq_recv + 1);
         stats.rx_overwin++;
     }
@@ -434,16 +436,16 @@ int dequeue_gre (callback_t callback, int cl)
 {
     pqueue_t *head;
     int status;
-    /* process packets in the queue that either are expected or have 
+    /* process packets in the queue that either are expected or have
      * timed out. */
     head = pqueue_head();
     while ( head != NULL &&
-            ( (head->seq == seq_recv + 1) || /* wrap-around safe */ 
-              (pqueue_expiry_time(head) <= 0) 
+            ( (head->seq == seq_recv + 1) || /* wrap-around safe */
+              (pqueue_expiry_time(head) <= 0)
             )
           ) {
         /* if it is timed out... */
-        if (head->seq != seq_recv + 1 ) {  /* wrap-around safe */          
+        if (head->seq != seq_recv + 1 ) {  /* wrap-around safe */
             stats.rx_lost += head->seq - seq_recv - 1;
 	    if (log_level >= 2)
                 log("timeout waiting for %d packets", head->seq - seq_recv - 1);

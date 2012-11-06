@@ -70,7 +70,7 @@ int vector_size(VECTOR *v)
 }
 
 /*** vector_insert*************************************************************
- * nice thing about file descriptors is that we are assured by POSIX 
+ * nice thing about file descriptors is that we are assured by POSIX
  * that they are monotonically increasing.
  */
 int vector_insert(VECTOR *v, int key, PPTP_CALL * call)
@@ -155,7 +155,7 @@ static struct vector_item *binary_search(VECTOR *v, int key)
 /*** vector_scan ***************************************************************
  * Hmm.  Let's be fancy and use a binary search for the first
  * unused key, taking advantage of the list is stored sorted; ie
- * we can look at pointers and keys at two different locations, 
+ * we can look at pointers and keys at two different locations,
  * and if (ptr1 - ptr2) = (key1 - key2) then all the slots
  * between ptr1 and ptr2 are filled.  Note that ptr1-ptr2 should
  * never be greater than key1-key2 (no duplicate keys!)... we

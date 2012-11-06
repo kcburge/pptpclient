@@ -82,5 +82,3 @@ orckit_atur3_start_ctrl_conn_hook(struct pptp_start_ctrl_conn* packet)
     memcpy(packet, &fixed_packet, sizeof(*packet));
     return 0;
 }
-
-

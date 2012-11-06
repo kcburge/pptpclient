@@ -50,5 +50,3 @@ int find_quirk(const char* isp_name)
 
     return -1;
 }
-
-
